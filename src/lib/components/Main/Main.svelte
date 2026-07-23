@@ -1,10 +1,26 @@
 <!-- src/lib/components/Main/Main.svelte -->
-<script>
-  import Calendar from "../Calendar/Calendar.svelte";
+<script lang="ts">
+  import { onMount } from "svelte";
+  import Router, { push } from "svelte-spa-router";
+  import CalendarPage from "../CalendarPage/CalendarPage.svelte";
   import Footer from "../Footer/Footer.svelte";
+  import SettingsPage from "../SettingsPage/SettingsPage.svelte";
+  import TimelinePage from "../TimelinePage/TimelinePage.svelte";
+
+  const routes = new Map();
+  routes.set("/timeline", TimelinePage);
+  routes.set("/calendar", CalendarPage);
+  routes.set("/settings", SettingsPage);
+  routes.set("*", CalendarPage);
+
+  onMount(async () => {
+    await push("/calendar");
+  });
 </script>
 
-<div data-component="Main" class="h-dvh w-dvw">
-  <Calendar />
+<div data-component="Main" class="h-dvh w-dvw flex flex-col">
+  <Router {routes} />
+
+  <div class="shrink-0 h-15"></div>
   <Footer />
 </div>

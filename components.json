@@ -9,6 +9,8 @@
 		"utils": "$lib/utils",
 		"ui": "$lib/components/ui",
 		"hooks": "$lib/hooks",
+		"types": "$lib/types",
+		"store": "$lib/store",
 		"lib": "$lib"
 	},
 	"typescript": true,

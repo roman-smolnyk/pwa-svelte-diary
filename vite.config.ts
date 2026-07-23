@@ -1,8 +1,9 @@
-import { VitePWA } from "vite-plugin-pwa";
-import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
+import { defineConfig } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
+import pkg from "./package.json";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -39,9 +40,15 @@ export default defineConfig({
       },
     }),
   ],
+  // shadcn
   resolve: {
     alias: {
       $lib: path.resolve("./src/lib"),
     },
   },
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
+  // github
+  base: "/pwa-svelte-diary",
 });
