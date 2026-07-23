@@ -12,7 +12,7 @@
   let note = $derived(diaryStore.noteMap.get(String(diaryStore.selectedDate)));
 </script>
 
-<NoteDialog bind:isOpen={isNoteDialogOpen} date={note?.date ?? String(today(getLocalTimeZone()))} />
+<NoteDialog bind:isOpen={isNoteDialogOpen} note={note} />
 
 <div data-component="CalendarPage" class="flex-1 flex flex-col items-center gap-1">
   <div class="flex-1 w-full h-full"><Calendar /></div>

@@ -6,9 +6,12 @@
   import { searchKeymap } from "@codemirror/search";
   import { EditorState } from "@codemirror/state";
   import { drawSelection, dropCursor, EditorView, keymap } from "@codemirror/view";
+  import { Button } from "$lib/components/ui/button";
+  import { RedoIcon, UndoIcon } from "@lucide/svelte";
+
+  let { view = $bindable(undefined), text }: { view?: EditorView; id?: string; date: string; text: string } = $props();
 
   let editorContainer: HTMLDivElement | undefined;
-  let view: EditorView | undefined;
 
   let canUndo = $state(false);
   let canRedo = $state(false);
@@ -34,7 +37,7 @@
   $effect(() => {
     if (!view && editorContainer) {
       const state = EditorState.create({
-        doc: "",
+        doc: $state.snapshot(text),
         extensions: [
           // A line number gutter
           // lineNumbers(),
@@ -92,10 +95,10 @@
       view = new EditorView({
         state,
         parent: editorContainer,
-        // dispatch: (tr) => {
-        //   // view?.update([tr]);
-        //   updateHistoryState();
-        // },
+        dispatch: (tr) => {
+          view?.update([tr]);
+          updateHistoryState();
+        },
       });
     }
   });
@@ -109,34 +112,25 @@
   });
 </script>
 
-<div class="flex flex-col gap-3">
-  <div class="flex gap-2">
-    <button
-      onclick={handleUndo}
-      disabled={!canUndo}
-      class="px-4 py-2 border border-gray-300 rounded-md transition-all {canUndo
-        ? 'cursor-pointer hover:bg-gray-50 active:scale-95'
-        : 'cursor-not-allowed opacity-50'}"
-    >
-      ↶ Undo
-    </button>
-    <button
-      onclick={handleRedo}
-      disabled={!canRedo}
-      class="px-4 py-2 border border-gray-300 rounded-md transition-all {canRedo
-        ? 'cursor-pointer hover:bg-gray-50 active:scale-95'
-        : 'cursor-not-allowed opacity-50'}"
-    >
-      ↷ Redo
-    </button>
+<div class="flex flex-col gap-2">
+  <div class="flex justify-end gap-0">
+    <Button variant="ghost" onclick={handleUndo} disabled={!canUndo} class=""><UndoIcon /></Button>
+    <Button variant="ghost" onclick={handleRedo} disabled={!canRedo} class=""><RedoIcon /></Button>
   </div>
-
-  <div bind:this={editorContainer} class=""></div>
+  <div class="max-h-60 overflow-y-auto">
+    <div bind:this={editorContainer} class=""></div>
+  </div>
 </div>
 
 <style>
   :global(.cm-editor) {
     height: 100%;
     font-family: monospace;
+  }
+  :global(.cm-cursor) {
+    border-left-color: #000000 !important;
+  }
+  :global(.dark .cm-cursor) {
+    border-left-color: #ffffff !important;
   }
 </style>
