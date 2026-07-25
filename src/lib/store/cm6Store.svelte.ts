@@ -20,7 +20,7 @@ class CM6Store {
   };
 
   updateHistoryState = () => {
-    console.debug("updateHistoryState", this.editorView);
+    // console.debug("updateHistoryState", this.editorView);
     if (!this.editorView) return;
     this.canUndo = undoDepth(this.editorView.state) > 0;
     this.canRedo = redoDepth(this.editorView.state) > 0;

@@ -1,22 +1,32 @@
+<!-- src/lib/components/TimelinePage/TimelinePage.svelte -->
 <script lang="ts">
+  import * as Empty from "$lib/components/ui/empty/index.js";
   import { diaryStore } from "$lib/store/diaryStore.svelte";
-  import * as Card from "$lib/components/ui/card/index.js";
-  import { getShortMonthNameFromDate } from "$lib/utils";
+  import TimelineNote from "./TimelineNote.svelte";
+
+  $effect(() => {
+    const note = diaryStore.selectedDateNotes[0];
+    if (!note) return;
+
+    setTimeout(() => {
+      const element = document.querySelector(`[data-component="TimelineNote"][data-id="${note.id}"]`);
+      if (element) {
+        console.debug("TimelinePage:scrollIntoView", element);
+        element.scrollIntoView({ behavior: "instant" });
+      }
+    }, 250);
+  });
 </script>
 
-<div data-component="TimelinePage" class="p-5 overflow-y-auto flex flex-col gap-4">
+<div data-component="TimelinePage" class="min-h-0 p-5 overflow-y-auto flex flex-col gap-4">
   {#each diaryStore.notes as note (note.id)}
-    <Card.Root class="w-full p-2">
-      <Card.Content class="p-0 flex flex-row gap-4">
-        <div class="min-h-16 min-w-16 rounded-full bg-muted flex flex-col items-center justify-center">
-        <div class="text-[0.5rem]">{note.date.split("-")[0]}</div>
-          <div class="text-xl">{note.date.split("-")[2]}</div>
-          <div class="text-xs">{getShortMonthNameFromDate(note.date)}</div>
-        </div>
-        <p class="truncate">{note.content}</p>
-      </Card.Content>
-    </Card.Root>
+    <TimelineNote {note} />
   {:else}
-    <div>Empty</div>
+    <Empty.Root>
+      <Empty.Header>
+        <Empty.Title>No Notes</Empty.Title>
+        <Empty.Description>No notes found</Empty.Description>
+      </Empty.Header>
+    </Empty.Root>
   {/each}
 </div>

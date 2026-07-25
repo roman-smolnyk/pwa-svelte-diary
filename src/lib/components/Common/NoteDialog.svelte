@@ -1,3 +1,4 @@
+<!-- src/lib/components/Common/NoteDialog.svelte -->
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
@@ -7,8 +8,14 @@
   import { EditorSelection } from "@codemirror/state";
   import { ArrowLeft, RedoIcon, Trash2Icon, UndoIcon } from "@lucide/svelte";
   import CM6Editor from "../CM6/CM6Editor.svelte";
+  import { debounce } from "lodash-es";
 
   let { isOpen: isOpen$ = $bindable(false), note }: { isOpen: boolean; note: NoteT } = $props();
+
+  const updateNoteDebounced = debounce(async (v: string) => {
+    console.debug("updateNoteDebounced");
+    await handleNoteUpdate(note.id, v);
+  }, 250);
 </script>
 
 {#key isOpen$}
@@ -33,12 +40,7 @@
       <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div class="p-4 flex-1 min-h-0">
         {#if note}
-          <CM6Editor
-            value={note.content}
-            onValueChange={async (v) => {
-              await handleNoteUpdate(note.id, v);
-            }}
-          />
+          <CM6Editor value={note.content} onValueChange={updateNoteDebounced} />
           <div
             class="size-full"
             onclick={(e) => {

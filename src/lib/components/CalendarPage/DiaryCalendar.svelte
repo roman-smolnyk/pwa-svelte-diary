@@ -27,10 +27,9 @@
     weekStartsOn={1}
   >
     {#snippet day({ day, outsideMonth })}
-      {@const noteExists = diaryStore.noteDates.includes(day.toString())}
       <CalendarDay class="flex flex-col">
         {day.day}
-        {#if !outsideMonth && noteExists}
+        {#if !outsideMonth && diaryStore.noteDates.has(day.toString())}
           <div><DotIcon class="text-destructive size-4" /></div>
         {:else}
           <div class="size-4"></div>
