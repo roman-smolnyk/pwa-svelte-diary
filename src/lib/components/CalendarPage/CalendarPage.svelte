@@ -29,6 +29,10 @@
     await handleNoteCreate(diaryStore.selectedDate.toString(), "");
     isNoteDialogOpen$ = true;
   }
+
+  function editNote() {
+    isNoteDialogOpen$ = true;
+  }
 </script>
 
 {#if note}
@@ -41,17 +45,30 @@
   </div>
   <div class="flex-1 min-h-0 w-full p-5 flex">
     {#if note}
-      <Card.Root class="h-fit w-full max-h-50 pt-2 min-h-0 flex flex-col gap-0">
+      <Card.Root class="h-fit w-full max-h-50 pt-2 min-h-0 cursor-pointer flex flex-col gap-0" onclick={editNote}>
         <Card.Header class="flex flex-row items-center justify-between">
           <Card.Description>{note.date}</Card.Description>
 
           <Drawer.Root>
-            <Drawer.Trigger>
-              {#snippet child({ props })}
-                <Button {...props} variant="ghost" size="sm"><EllipsisIcon /></Button>
-              {/snippet}
-            </Drawer.Trigger>
-            <Drawer.Content>
+            <div
+              onclick={(e) => {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+              }}
+            >
+              <Drawer.Trigger
+                onclick={(e) => {
+                  // e.preventDefault();
+                  // e.stopImmediatePropagation();
+                }}
+              >
+                {#snippet child({ props })}
+                  <Button {...props} variant="ghost" size="sm"><EllipsisIcon /></Button>
+                {/snippet}
+              </Drawer.Trigger>
+            </div>
+
+            <Drawer.Content onCloseAutoFocus={(e) => e.preventDefault()}>
               <Drawer.Header>
                 <Drawer.Title>{note.date}</Drawer.Title>
               </Drawer.Header>

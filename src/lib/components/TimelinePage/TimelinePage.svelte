@@ -6,8 +6,8 @@
 
 <div data-component="TimelinePage" class="p-5 overflow-y-auto flex flex-col gap-4">
   {#each diaryStore.notes as note (note.id)}
-    <Card.Root class="w-full">
-      <Card.Content class="flex flex-row gap-4">
+    <Card.Root class="w-full p-2">
+      <Card.Content class="p-0 flex flex-row gap-4">
         <div class="min-h-16 min-w-16 rounded-full bg-muted flex flex-col items-center justify-center">
         <div class="text-[0.5rem]">{note.date.split("-")[0]}</div>
           <div class="text-xl">{note.date.split("-")[2]}</div>
