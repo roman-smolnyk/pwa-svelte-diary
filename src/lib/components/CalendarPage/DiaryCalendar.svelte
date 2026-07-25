@@ -1,20 +1,26 @@
-<!-- src/lib/components/Calendar/Calendar.svelte -->
+<!-- src/lib/components/Calendar/DiaryCalendar.svelte -->
 <script lang="ts">
-  import CalendarDay from "$lib/components/ui/calendar/calendar-day.svelte";
-  import Calendar from "$lib/components/ui/calendar/calendar.svelte";
+  import CalendarDay from "$lib/components/ui/calendarFlex/calendar-day.svelte";
+  import Calendar from "$lib/components/ui/calendarFlex/calendar.svelte";
   import { diaryStore } from "$lib/store/diaryStore.svelte";
-  import { CalendarDate, getLocalTimeZone, today } from "@internationalized/date";
+  import { CalendarDate, getLocalTimeZone, today, type DateValue } from "@internationalized/date";
   import DotIcon from "@lucide/svelte/icons/dot";
 
-  let placeholder = $state<CalendarDate | undefined>(today(getLocalTimeZone()));
+  let {
+    value = $bindable(today(getLocalTimeZone())),
+    onValueChange,
+  }: { value: CalendarDate | undefined; onValueChange?: (v: DateValue | undefined) => void } = $props();
+
+  let placeholder = $state<CalendarDate>(today(getLocalTimeZone()));
 </script>
 
-<div data-component="Calendar" class="flex-1 w-full h-full">
+<div data-component="DiaryCalendar" class="flex-1 w-full h-full">
   <Calendar
     bind:placeholder
     bind:value={diaryStore.selectedDate}
+    {onValueChange}
     type="single"
-    class="w-full h-full rounded-lg border"
+    class="w-full h-full"
     monthFormat="long"
     captionLayout="dropdown"
     disableDaysOutsideMonth={true}

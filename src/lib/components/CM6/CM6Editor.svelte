@@ -1,109 +1,52 @@
 <script lang="ts">
-  import { closeBracketsKeymap, completionKeymap } from "@codemirror/autocomplete";
-  import { defaultKeymap, history, historyKeymap, redo, redoDepth, undo, undoDepth } from "@codemirror/commands";
-  import { foldKeymap, indentOnInput } from "@codemirror/language";
-  import { lintKeymap } from "@codemirror/lint";
-  import { searchKeymap } from "@codemirror/search";
-  import { EditorState } from "@codemirror/state";
-  import { drawSelection, dropCursor, EditorView, keymap } from "@codemirror/view";
-  import { Button } from "$lib/components/ui/button";
-  import { RedoIcon, UndoIcon } from "@lucide/svelte";
+  import { cm6Store } from "$lib/store/cm6Store.svelte";
+  import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
+  import { EditorSelection, EditorState } from "@codemirror/state";
+  import { EditorView, keymap } from "@codemirror/view";
+  import { onMount } from "svelte";
 
-  let { view = $bindable(undefined), text }: { view?: EditorView; id?: string; date: string; text: string } = $props();
+  let { value, onValueChange }: { value: string; onValueChange: (v: string) => void } = $props();
 
   let editorContainer: HTMLDivElement | undefined;
 
-  let canUndo = $state(false);
-  let canRedo = $state(false);
+  onMount(() => {
+    console.debug("CM6Editor:onMount");
+    const state = EditorState.create({
+      doc: $state.snapshot(value),
+      extensions: [
+        history(),
+        EditorView.lineWrapping,
+        EditorView.contentAttributes.of({ spellcheck: "true" }),
+        keymap.of([
+          // A large set of basic bindings
+          ...defaultKeymap,
+          // Redo/undo keys
+          ...historyKeymap,
+        ]),
+        EditorView.updateListener.of((update) => {
+          if (update.docChanged) {
+            const newValue = update.state.doc.toString();
+            onValueChange(newValue);
+            cm6Store.updateHistoryState();
+          }
+        }),
+      ],
+    });
 
-  function updateHistoryState() {
-    if (!view) return;
-    canUndo = undoDepth(view.state) > 0;
-    canRedo = redoDepth(view.state) > 0;
-  }
+    const view = new EditorView({
+      state,
+      parent: editorContainer,
+    });
 
-  function handleUndo() {
-    if (!view) return;
-    undo(view);
-    updateHistoryState();
-  }
-
-  function handleRedo() {
-    if (!view) return;
-    redo(view);
-    updateHistoryState();
-  }
-
-  $effect(() => {
-    if (!view && editorContainer) {
-      const state = EditorState.create({
-        doc: $state.snapshot(text),
-        extensions: [
-          // A line number gutter
-          // lineNumbers(),
-          // A gutter with code folding markers
-          // foldGutter(),
-          // Replace non-printable characters with placeholders
-          // highlightSpecialChars(),
-          // The undo history
-          history(),
-          // Replace native cursor/selection with our own
-          drawSelection(),
-          // Show a drop cursor when dragging over the editor
-          dropCursor(),
-          // Allow multiple cursors/selections
-          // EditorState.allowMultipleSelections.of(true),
-          // Re-indent lines when typing specific input
-          indentOnInput(),
-          // Highlight syntax with a default style
-          // syntaxHighlighting(defaultHighlightStyle),
-          // Highlight matching brackets near cursor
-          // bracketMatching(),
-          // Automatically close brackets
-          // closeBrackets(),
-          // Load the autocompletion system
-          // autocompletion(),
-          // Allow alt-drag to select rectangular regions
-          // rectangularSelection(),
-          // Change the cursor to a crosshair when holding alt
-          // crosshairCursor(),
-          // Style the current line specially
-          // highlightActiveLine(),
-          // Style the gutter for current line specially
-          // highlightActiveLineGutter(),
-          // Highlight text that matches the selected text
-          // highlightSelectionMatches(),
-          keymap.of([
-            // Closed-brackets aware backspace
-            ...closeBracketsKeymap,
-            // A large set of basic bindings
-            ...defaultKeymap,
-            // Search-related keys
-            ...searchKeymap,
-            // Redo/undo keys
-            ...historyKeymap,
-            // Code folding bindings
-            ...foldKeymap,
-            // Autocompletion keys
-            ...completionKeymap,
-            // Keys related to the linter system
-            ...lintKeymap,
-          ]),
-        ],
+    setTimeout(() => {
+      view.focus();
+      view.dispatch({
+        selection: EditorSelection.cursor(view.state.doc.length),
       });
+    }, 250);
 
-      view = new EditorView({
-        state,
-        parent: editorContainer,
-        dispatch: (tr) => {
-          view?.update([tr]);
-          updateHistoryState();
-        },
-      });
-    }
-  });
+    cm6Store.editorView = view;
 
-  $effect.pre(() => {
     return () => {
       if (view) {
         view.destroy();
@@ -112,25 +55,27 @@
   });
 </script>
 
-<div class="flex flex-col gap-2">
-  <div class="flex justify-end gap-0">
-    <Button variant="ghost" onclick={handleUndo} disabled={!canUndo} class=""><UndoIcon /></Button>
-    <Button variant="ghost" onclick={handleRedo} disabled={!canRedo} class=""><RedoIcon /></Button>
-  </div>
-  <div class="max-h-60 overflow-y-auto">
-    <div bind:this={editorContainer} class=""></div>
-  </div>
-</div>
+<div data-component="CM6Editor" bind:this={editorContainer} class="bg-muted"></div>
 
 <style>
-  :global(.cm-editor) {
+  /* :global(.cm-editor) {
     height: 100%;
-    font-family: monospace;
+  } */
+  :global(.cm-content) {
+    caret-color: light-dark(black, white) !important;
+    overflow-wrap: break-word !important;
+    font-family: Inter, Arial, system-ui, Avenir, Helvetica, sans-serif;
   }
-  :global(.cm-cursor) {
-    border-left-color: #000000 !important;
+  :global(.cm-focused) {
+    outline: none;
   }
-  :global(.dark .cm-cursor) {
-    border-left-color: #ffffff !important;
+  :global(.cm-line) {
+    padding: 0;
+  }
+  :global(.cm-lineWrapping) {
+    white-space: pre-wrap;
+  }
+  :global(.cm-scroller) {
+    line-height: inherit;
   }
 </style>

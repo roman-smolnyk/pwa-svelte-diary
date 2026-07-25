@@ -87,7 +87,7 @@ get along, so we shut typescript up by casting `value` to `never`.
                 onclick={() => {
                   placeholder = today(getLocalTimeZone());
                   value = today(getLocalTimeZone());
-                }}>Reset</Button
+                }}>Today</Button
               >
             </Calendar.Header>
             <Calendar.Grid class="flex-1 flex flex-col">

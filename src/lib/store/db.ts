@@ -42,6 +42,17 @@ export async function getAllNotes(): Promise<NoteT[]> {
   return notes;
 }
 
+export async function getNote(noteId: string): Promise<NoteT> {
+  console.debug("getNote", noteId);
+  const db = await dbPromise;
+  const note = await db.get("notes", noteId);
+  if (!note) {
+    throw new Error(`Note with id=${noteId} is missing`);
+  }
+
+  return note;
+}
+
 export async function saveNotes(notes: NoteT[]) {
   console.debug("saveNotes", notes);
   const db = await dbPromise;
@@ -51,4 +62,10 @@ export async function saveNotes(notes: NoteT[]) {
   await Promise.all(notes.map((note) => notesStore.put(note)));
 
   await tx.done;
+}
+
+export async function deleteNote(noteId: string) {
+  console.debug("deleteNote", noteId);
+  const db = await dbPromise;
+  await db.delete("notes", noteId);
 }
