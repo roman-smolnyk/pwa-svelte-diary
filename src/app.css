@@ -133,3 +133,102 @@
     cursor: pointer;
   }
 }
+
+/* MARKDOWN */
+@layer utilities {
+  .css-markdown-render,
+  .cm-content {
+    @apply leading-snug min-h-[calc(1rem*var(--leading-snug))];
+  }
+
+  .css-markdown-render h1 {
+    @apply text-3xl font-bold leading-none;
+  }
+
+  .css-markdown-render h2 {
+    @apply text-2xl font-semibold leading-none;
+  }
+
+  .css-markdown-render h3 {
+    @apply text-xl font-semibold leading-none;
+  }
+
+  .css-markdown-render h4 {
+    @apply text-lg font-semibold;
+  }
+
+  .css-markdown-render h5 {
+    @apply text-base font-semibold;
+  }
+
+  .css-markdown-render h6 {
+    @apply text-sm font-semibold;
+  }
+
+  .css-markdown-render p {
+    /* @apply leading-tight; */
+  }
+
+  /* .css-markdown-render a {
+    @apply text-blue-600;
+  } */
+
+  .css-markdown-render strong {
+    font-weight: bolder;
+  }
+
+  .css-markdown-render em {
+    font-style: italic;
+  }
+
+  .css-markdown-render del {
+    text-decoration: line-through;
+  }
+
+  .css-markdown-render pre,
+  .css-markdown-render code,
+  .md-code {
+    font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+    /* line-height: 1.25; */
+    /* font-size: 0.9rem; */
+  }
+
+  .css-markdown-render img {
+    @apply inline-block my-1;
+  }
+
+  .css-markdown-render table {
+    border-collapse: collapse;
+    @apply my-1;
+  }
+
+  .css-markdown-render th,
+  .css-markdown-render td {
+    border: 1px solid light-dark(black, white);
+    padding: 4px 8px;
+  }
+
+  .css-markdown-render ol {
+    @apply list-decimal list-inside;
+  }
+
+  .css-markdown-render ol ol {
+    @apply pl-4;
+  }
+
+  .css-markdown-render ul {
+    @apply list-disc list-inside;
+  }
+
+  .css-markdown-render ul ul {
+    @apply pl-4;
+  }
+
+  .css-markdown-render hr {
+    @apply h-[1px] border-none bg-border my-[calc(((1rem*var(--leading-snug))-1px)/2)];
+  }
+
+  .css-markdown-render blockquote {
+    @apply pl-4 italic border-l-4 border-border text-muted-foreground;
+  }
+}

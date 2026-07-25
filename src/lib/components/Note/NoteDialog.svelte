@@ -18,11 +18,11 @@
       class="p-0 top-0 left-0 translate-x-0 translate-y-0 w-dvw h-dvh max-w-none sm:max-w-none max-h-none rounded-none flex flex-col
              gap-0"
     >
-      <Dialog.Header class="p-2 flex flex-row justify-between gap-4">
+      <Dialog.Header class="p-2 mt-2 flex flex-row justify-between gap-4">
         <div class="flex items-center gap-4">
           <Dialog.Close>
             {#snippet child({ props })}
-              <Button {...props} variant="ghost" size="lg"><ArrowLeft /></Button>
+              <Button {...props} variant="ghost" size="icon-lg" class="size-10"><ArrowLeft class="size-6" /></Button>
             {/snippet}
           </Dialog.Close>
 
@@ -55,7 +55,7 @@
       <Dialog.Footer class="shrink-0 m-0 p-4 pt-2 flex flex-row justify-end">
         <Dialog.Close onclick={() => handleNoteDelete(note.id)} class="mr-2">
           {#snippet child({ props })}
-            <Button {...props} variant="ghost" size="lg"><Trash2Icon /></Button>
+            <Button {...props} variant="ghost" size="lg"><Trash2Icon class="text-destructive" /></Button>
           {/snippet}
         </Dialog.Close>
 

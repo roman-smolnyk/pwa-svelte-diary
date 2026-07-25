@@ -15,6 +15,9 @@
       doc: $state.snapshot(value),
       extensions: [
         history(),
+        EditorView.theme({
+          "&.cm-focused": { outline: "none" },
+        }),
         EditorView.lineWrapping,
         EditorView.contentAttributes.of({ spellcheck: "true" }),
         keymap.of([
@@ -55,7 +58,7 @@
   });
 </script>
 
-<div data-component="CM6Editor" bind:this={editorContainer} class="bg-muted"></div>
+<div data-component="CM6Editor" bind:this={editorContainer} class=""></div>
 
 <style>
   /* :global(.cm-editor) {
@@ -65,9 +68,6 @@
     caret-color: light-dark(black, white) !important;
     overflow-wrap: break-word !important;
     font-family: Inter, Arial, system-ui, Avenir, Helvetica, sans-serif;
-  }
-  :global(.cm-focused) {
-    outline: none;
   }
   :global(.cm-line) {
     padding: 0;
