@@ -20,8 +20,8 @@ export default defineConfig({
       },
 
       manifest: {
-        name: "Diary App by Smoll",
-        short_name: "Diary",
+        name: "Diary by R. Smol.",
+        short_name: "RS Diary",
         description: "Simple diary app with csv export.",
         theme_color: "#ffffff",
       },

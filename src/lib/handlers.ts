@@ -25,6 +25,10 @@ export async function handleNoteDelete(noteId: string) {
   await diaryStore.refresh();
 }
 
+export async function handleExportToCsv() {}
+
+export async function handleImportFromCsv() {}
+
 export async function handlePWAUpdate() {
   console.debug("handlePWAUpdate");
   if (!navigator.onLine) return;
