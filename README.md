@@ -1,6 +1,6 @@
 # Stickers by R. Smol (RS Stickers)
 
-### Simple diary PWA app with csv export.
+### Simple diary PWA app with csv export
 
 <br/>
 
@@ -11,4 +11,6 @@
 
 <br/>
 
-<br/>
+<div align="center">
+  <img src="docs/screenshot_1.png" alt="Screen 1" width="350"/>
+</div>
