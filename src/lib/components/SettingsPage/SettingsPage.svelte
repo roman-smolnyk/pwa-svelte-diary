@@ -58,7 +58,7 @@
     <Button variant="outline" onclick={() => handleExportToCsv()}>
       <DatabaseArrowDownIcon /><span>Export to CSV</span>
     </Button>
-    <input bind:this={csvFileInput$} type="file" accept="application/zip, .zip" onchange={handleCsvUpload} class="hidden" />
+    <input bind:this={csvFileInput$} type="file" accept=".csv, text/csv" onchange={handleCsvUpload} class="hidden" />
     <Button variant="outline" onclick={() => csvFileInput$?.click()}>
       <DatabaseArrowUpIcon /><span>Import from CSV</span>
     </Button>

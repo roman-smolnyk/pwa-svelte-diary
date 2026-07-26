@@ -60,6 +60,7 @@ export async function handleImportFromCsv(file: File) {
       console.error("Failed to parse CSV:", error);
     },
   });
+  reload();
 }
 
 export async function handleDeleteAllData() {
