@@ -8,6 +8,7 @@
   import SvelteMarkdown from "@humanspeak/svelte-markdown";
   import { EllipsisIcon } from "@lucide/svelte";
   import NoteDialog from "../Common/NoteDialog.svelte";
+  import { formatCustomDate } from "$lib/utils";
 
   let { note }: { note: NoteT } = $props();
 
@@ -32,7 +33,7 @@
 <div data-component="CalendarNote" class="w-full h-fit">
   <Card.Root class="w-full h-fit max-h-50 pt-2 min-h-0 cursor-pointer flex flex-col gap-0" onclick={editNote}>
     <Card.Header class="flex flex-row items-center justify-between">
-      <Card.Description>{note.date}</Card.Description>
+      <Card.Description>{formatCustomDate(note.dateTime)}</Card.Description>
 
       <Drawer.Root>
         <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -57,7 +58,7 @@
 
         <Drawer.Content onCloseAutoFocus={(e) => e.preventDefault()}>
           <Drawer.Header>
-            <Drawer.Title>{note.date}</Drawer.Title>
+            <Drawer.Title>{formatCustomDate(note.dateTime)}</Drawer.Title>
           </Drawer.Header>
           <Drawer.Footer>
             <Drawer.Close onclick={() => handleNoteDelete(note.id)}>

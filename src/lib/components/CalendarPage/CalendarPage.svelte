@@ -7,16 +7,32 @@
   import { diaryStore } from "$lib/store/diaryStore.svelte";
   import { PlusIcon } from "@lucide/svelte";
   import CalendarNote from "./CalendarNote.svelte";
+  import NoteDialog from "../Common/NoteDialog.svelte";
+  import type { NoteT } from "$lib/types";
+  import { getLocalTimeZone, today } from "@internationalized/date";
+
+  let isNoteDialogOpen$ = $state(false);
+  let newNote$ = $state<NoteT | undefined>(undefined);
 
   async function addNote() {
     if (!diaryStore.selectedDate) return;
-    await handleNoteCreate(diaryStore.selectedDate.toString(), "");
-    // isNoteDialogOpen$ = true;
+    const date = diaryStore.selectedDate.toString();
+    if (date === today(getLocalTimeZone()).toString()) {
+      newNote$ = await handleNoteCreate(new Date(), "");
+    } else {
+      newNote$ = await handleNoteCreate(new Date(`${date}T12:00:00`), "");
+    }
+
+    isNoteDialogOpen$ = true;
   }
 </script>
 
+{#if newNote$}
+  <NoteDialog bind:isOpen={isNoteDialogOpen$} note={newNote$} />
+{/if}
+
 <div data-component="CalendarPage" class="flex-1 flex flex-col items-center gap-1 min-h-0">
-  <div class="flex-1 pt-4 w-full h-full min-h-0">
+  <div class="h-fit pt-4 w-full min-h-0">
     <Calendar bind:value={diaryStore.selectedDate} />
   </div>
   <div class="flex-1 min-h-0 w-full p-5 overflow-y-auto flex flex-col gap-4">

@@ -3,18 +3,20 @@ import { nanoid } from "nanoid";
 import { diaryStore } from "./store/diaryStore.svelte";
 import type { NoteT } from "./types";
 
-export async function handleNoteCreate(date: string, content: string) {
-  const note: NoteT = { id: nanoid(), date: date, content: content };
+export async function handleNoteCreate(dateTime: Date, content: string): Promise<NoteT> {
+  const note: NoteT = { id: nanoid(), dateTime: dateTime, content: content };
 
   await db.saveNotes([note]);
 
   await diaryStore.refresh();
+
+  return note;
 }
 
-export async function handleNoteUpdate(noteId: string, content: string) {
+export async function handleNoteUpdate(noteId: string, fn: (note: NoteT) => NoteT) {
   const note = await db.getNote(noteId);
-  note.content = content;
-  await db.saveNotes([note]);
+  const updatedNote = fn(note);
+  await db.saveNotes([updatedNote]);
 
   await diaryStore.refresh();
 }

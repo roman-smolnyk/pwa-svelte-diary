@@ -1,19 +1,21 @@
 // src/lib/store/diaryStore.svelte.ts
 import * as db from "$lib/store/db";
 import type { NoteT } from "$lib/types";
+import { getDateStrFromDate } from "$lib/utils";
 import { CalendarDate, getLocalTimeZone, today } from "@internationalized/date";
 
 class DiaryStore {
   #notes = $state<NoteT[]>([]);
   selectedDate = $state<CalendarDate | undefined>(today(getLocalTimeZone()));
-  noteDates = $derived(new Set(this.#notes.map((a) => a.date)));
+  noteDates = $derived(new Set(this.#notes.map((a) => getDateStrFromDate(a.dateTime))));
   dateNoteMap = $derived.by(() => {
     const map: Map<string, NoteT[]> = new Map();
     for (const item of this.#notes) {
-      let list = map.get(item.date);
+      const date = getDateStrFromDate(item.dateTime);
+      let list = map.get(date);
       if (!list) {
         list = [];
-        map.set(item.date, list);
+        map.set(date, list);
       }
       list.push(item);
     }
@@ -27,7 +29,7 @@ class DiaryStore {
 
   async refresh() {
     const notes = await db.getAllNotes();
-    this.#notes = notes.sort((a, b) => a.date.localeCompare(b.date));
+    this.#notes = notes.sort((a, b) => a.dateTime.getTime() - b.dateTime.getTime());
   }
 
   get notes() {
