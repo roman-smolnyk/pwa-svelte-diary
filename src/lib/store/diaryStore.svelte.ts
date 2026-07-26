@@ -7,6 +7,7 @@ import { CalendarDate, getLocalTimeZone, today } from "@internationalized/date";
 class DiaryStore {
   #notes = $state<NoteT[]>([]);
   selectedDate = $state<CalendarDate | undefined>(today(getLocalTimeZone()));
+  selectedNote = $state<NoteT | null>(null);
   noteDates = $derived(new Set(this.#notes.map((a) => getDateStrFromDate(a.dateTime))));
   dateNoteMap = $derived.by(() => {
     const map: Map<string, NoteT[]> = new Map();

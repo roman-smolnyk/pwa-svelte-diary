@@ -8,6 +8,7 @@
   import { pop, push, router } from "svelte-spa-router";
 </script>
 
+<div class="shrink-0 h-15"></div>
 <div data-component="Footer" class="fixed bottom-0 inset-x-0 h-15 border-t border-border flex flex-row">
   <Button
     variant="ghost"

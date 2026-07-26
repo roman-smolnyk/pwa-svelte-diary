@@ -5,13 +5,11 @@
   import * as Empty from "$lib/components/ui/empty/index.js";
   import { handleNoteCreate } from "$lib/handlers";
   import { diaryStore } from "$lib/store/diaryStore.svelte";
-  import { PlusIcon } from "@lucide/svelte";
-  import CalendarNote from "./CalendarNote.svelte";
-  import NoteDialog from "../Common/NoteDialog.svelte";
   import type { NoteT } from "$lib/types";
   import { getLocalTimeZone, today } from "@internationalized/date";
+  import { PlusIcon } from "@lucide/svelte";
+  import CalendarNote from "./CalendarNote.svelte";
 
-  let isNoteDialogOpen$ = $state(false);
   let newNote$ = $state<NoteT | undefined>(undefined);
 
   async function addNote() {
@@ -22,14 +20,9 @@
     } else {
       newNote$ = await handleNoteCreate(new Date(`${date}T12:00:00`), "");
     }
-
-    isNoteDialogOpen$ = true;
+    diaryStore.selectedNote = newNote$;
   }
 </script>
-
-{#if newNote$}
-  <NoteDialog bind:isOpen={isNoteDialogOpen$} note={newNote$} />
-{/if}
 
 <div data-component="CalendarPage" class="flex-1 flex flex-col items-center gap-1 min-h-0">
   <div class="h-fit pt-4 w-full min-h-0">

@@ -6,6 +6,7 @@
   import Footer from "../Footer/Footer.svelte";
   import SettingsPage from "../SettingsPage/SettingsPage.svelte";
   import TimelinePage from "../TimelinePage/TimelinePage.svelte";
+  import NoteDialog from "../Common/NoteDialog.svelte";
 
   const routes = new Map();
   routes.set("/timeline", TimelinePage);
@@ -21,6 +22,7 @@
 <div data-component="Main" class="h-dvh w-dvw flex flex-col">
   <Router {routes} />
 
-  <div class="shrink-0 h-15"></div>
   <Footer />
+
+  <NoteDialog />
 </div>

@@ -4,15 +4,14 @@
   import * as Card from "$lib/components/ui/card/index.js";
   import * as Drawer from "$lib/components/ui/drawer/index.js";
   import { handleNoteDelete } from "$lib/handlers";
+  import { diaryStore } from "$lib/store/diaryStore.svelte";
   import type { NoteT } from "$lib/types";
+  import { formatCustomDate } from "$lib/utils";
   import SvelteMarkdown from "@humanspeak/svelte-markdown";
   import { EllipsisIcon } from "@lucide/svelte";
-  import NoteDialog from "../Common/NoteDialog.svelte";
-  import { formatCustomDate } from "$lib/utils";
 
   let { note }: { note: NoteT } = $props();
 
-  let isNoteDialogOpen$ = $state(false);
   let source = $derived.by(() => {
     if (!note) return "";
     // let text = note.content.replace(/```[\s\S]*?```/g, (m) => m.replace(/\n/g, "\n ")).replace(/\$\$[\s\S]*?\$\$/g, (m) => m);
@@ -24,11 +23,9 @@
   });
 
   function editNote() {
-    isNoteDialogOpen$ = true;
+    diaryStore.selectedNote = note;
   }
 </script>
-
-<NoteDialog bind:isOpen={isNoteDialogOpen$} {note} />
 
 <div data-component="CalendarNote" class="w-full h-fit">
   <Card.Root class="w-full h-fit max-h-50 pt-2 min-h-0 cursor-pointer flex flex-col gap-0" onclick={editNote}>
