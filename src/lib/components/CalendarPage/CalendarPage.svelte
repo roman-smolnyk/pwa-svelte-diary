@@ -20,7 +20,7 @@
     } else {
       newNote$ = await handleNoteCreate(new Date(`${date}T12:00:00`), "");
     }
-    diaryStore.selectedNote = newNote$;
+    diaryStore.openNoteDialog(newNote$.id);
   }
 </script>
 

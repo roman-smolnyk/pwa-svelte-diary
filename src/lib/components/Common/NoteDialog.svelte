@@ -10,6 +10,8 @@
   import { EditorSelection } from "@codemirror/state";
   import { ArrowLeft, RedoIcon, Trash2Icon, UndoIcon } from "@lucide/svelte";
   import { debounce } from "lodash-es";
+  import { onMount } from "svelte";
+  import { pop, router } from "svelte-spa-router";
   import CM6Editor from "../CM6/CM6Editor.svelte";
 
   let note = $derived(diaryStore.selectedNote);
@@ -19,6 +21,21 @@
   $effect(() => {
     if (!note) return;
     inputValue$ = formatCustomDate(note.dateTime);
+  });
+
+  onMount(() => {
+    const handleBeforeUnload = (e: PopStateEvent) => {
+      console.debug("handleBeforeUnload", note, router.querystring);
+      if (diaryStore.selectedNote && router.querystring?.includes("modal")) {
+        diaryStore.selectedNote = null;
+      }
+    };
+
+    window.addEventListener("popstate", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("popstate", handleBeforeUnload);
+    };
   });
 
   const updateNoteContentDebounced = debounce(async (v: string) => {
@@ -58,7 +75,12 @@
       >
         <Dialog.Header class="p-2 mt-2 flex flex-row justify-between gap-4">
           <div class="flex items-center gap-4">
-            <Dialog.Close onclick={() => (diaryStore.selectedNote = null)}>
+            <Dialog.Close
+              onclick={() => {
+                pop();
+                diaryStore.selectedNote = null;
+              }}
+            >
               {#snippet child({ props })}
                 <Button {...props} variant="ghost" size="icon-lg" class="size-10"><ArrowLeft class="size-6" /></Button>
               {/snippet}
@@ -84,7 +106,7 @@
         </Dialog.Header>
 
         <div class="flex-1 min-h-0 overflow-y-auto flex flex-col">
-          <div class="shrink-0 w-full p-4">
+          <div class="shrink-0 w-full p-4 text-base">
             <CM6Editor value={note.content} onValueChange={updateNoteContentDebounced} />
           </div>
           <div

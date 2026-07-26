@@ -9,21 +9,12 @@
   import { formatCustomDate } from "$lib/utils";
   import SvelteMarkdown from "@humanspeak/svelte-markdown";
   import { EllipsisIcon } from "@lucide/svelte";
+  import Markdown from "../Common/Markdown.svelte";
 
   let { note }: { note: NoteT } = $props();
 
-  let source = $derived.by(() => {
-    if (!note) return "";
-    // let text = note.content.replace(/```[\s\S]*?```/g, (m) => m.replace(/\n/g, "\n ")).replace(/\$\$[\s\S]*?\$\$/g, (m) => m);
-    const text = note.content.replace(/(?<=\n)(?![*-])\n/g, "<br/>");
-    // if (text.endsWith("\n") || text.endsWith("\n ")) {
-    //   text = `${text}<br>`;
-    // }
-    return text;
-  });
-
   function editNote() {
-    diaryStore.selectedNote = note;
+    diaryStore.openNoteDialog(note.id);
   }
 </script>
 
@@ -68,9 +59,7 @@
       </Drawer.Root>
     </Card.Header>
     <Card.Content class="flex-1 overflow-hidden">
-      <div class="css-markdown-render whitespace-pre-wrap break-all">
-        <SvelteMarkdown {source} />
-      </div>
+      <Markdown text={note.content} />
     </Card.Content>
   </Card.Root>
 </div>

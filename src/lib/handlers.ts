@@ -5,6 +5,16 @@ import Papa from "papaparse";
 import { diaryStore } from "./store/diaryStore.svelte";
 import type { NoteT } from "./types";
 import { reload } from "./utils";
+import { pop, push, router } from "svelte-spa-router";
+
+export function navigateToModal() {
+  const currentPath = router.location.split("?")[0];
+  const params = new URLSearchParams(router.location.split("?")[1] || "");
+  params.set("modal", "true");
+  const path = `${currentPath}?${params.toString()}`;
+  console.debug("push", path);
+  push(path);
+}
 
 export async function handleNoteCreate(dateTime: Date, content: string): Promise<NoteT> {
   const note: NoteT = { id: nanoid(), dateTime: dateTime, content: content };

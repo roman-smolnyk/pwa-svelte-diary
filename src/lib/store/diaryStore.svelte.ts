@@ -1,4 +1,5 @@
 // src/lib/store/diaryStore.svelte.ts
+import { navigateToModal } from "$lib/handlers";
 import * as db from "$lib/store/db";
 import type { NoteT } from "$lib/types";
 import { getDateStrFromDate } from "$lib/utils";
@@ -35,6 +36,13 @@ class DiaryStore {
 
   get notes() {
     return this.#notes;
+  }
+
+  openNoteDialog(noteId: string) {
+    const note = this.#notes.find((a) => a.id === noteId);
+    if (!note) return;
+    this.selectedNote = note;
+    navigateToModal();
   }
 }
 
