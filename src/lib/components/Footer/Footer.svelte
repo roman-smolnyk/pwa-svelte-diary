@@ -8,23 +8,23 @@
   import { pop, push, router, replace } from "svelte-spa-router";
 </script>
 
-<div class="shrink-0 h-15"></div>
-<div data-component="Footer" class="fixed bottom-0 inset-x-0 h-15 border-t border-border flex flex-row">
+<div class="shrink-0 h-13"></div>
+<div data-component="Footer" class="fixed bottom-0 inset-x-0 h-13 border-t border-border flex flex-row">
   <Button
     variant="ghost"
-    class={`flex-1 h-full w-full p-2 [&_svg:not([class*='size-'])]:size-8 ${router.location.includes("timeline") ? "bg-accent" : ""}`}
+    class={`flex-1 h-full w-full p-0 [&_svg:not([class*='size-'])]:size-6 ${router.location.includes("timeline") ? "bg-accent" : ""}`}
     onclick={() => replace("/timeline")}><LayoutListIcon /></Button
   >
   <Separator orientation="vertical" />
   <Button
     variant="ghost"
-    class={`flex-1 h-full w-full p-2 [&_svg:not([class*='size-'])]:size-8 ${router.location.includes("calendar") ? "bg-accent" : ""}`}
+    class={`flex-1 h-full w-full p-0 [&_svg:not([class*='size-'])]:size-6 ${router.location.includes("calendar") ? "bg-accent" : ""}`}
     onclick={() => replace("/calendar")}><CalendarDaysIcon /></Button
   >
   <Separator orientation="vertical" />
   <Button
     variant="ghost"
-    class={`flex-1 h-full w-full p-2 [&_svg:not([class*='size-'])]:size-8 ${router.location.includes("settings") ? "bg-accent" : ""}`}
+    class={`flex-1 h-full w-full p-0 [&_svg:not([class*='size-'])]:size-6 ${router.location.includes("settings") ? "bg-accent" : ""}`}
     onclick={() => replace("/settings")}><SettingsIcon /></Button
   >
 </div>
