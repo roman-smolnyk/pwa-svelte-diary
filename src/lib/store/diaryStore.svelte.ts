@@ -30,7 +30,7 @@ class DiaryStore {
 
   async refresh() {
     const notes = await db.getAllNotes();
-    this.#notes = notes.sort((a, b) => a.dateTime.getTime() - b.dateTime.getTime());
+    this.#notes = notes;
   }
 
   get notes() {

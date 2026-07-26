@@ -4,6 +4,7 @@
   import { ModeWatcher } from "mode-watcher";
   import { Toaster } from "$lib/components/ui/sonner/index.js";
   import Main from "$lib/components/Main/Main.svelte";
+  import ConfirmAlertDialog from "$lib/components/Common/ConfirmAlertDialog.svelte";
 </script>
 
 <ModeWatcher themeColors={{ dark: "black", light: "white" }} />
@@ -15,6 +16,7 @@
   toastOptions={{ class: "pointer-events-auto!", descriptionClass: "pointer-events-auto!" }}
 />
 <PWABadge />
+<ConfirmAlertDialog />
 
 <main>
   <Main />

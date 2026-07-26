@@ -1,7 +1,10 @@
 import * as db from "$lib/store/db";
+import { saveAs } from "file-saver";
 import { nanoid } from "nanoid";
+import Papa from "papaparse";
 import { diaryStore } from "./store/diaryStore.svelte";
 import type { NoteT } from "./types";
+import { reload } from "./utils";
 
 export async function handleNoteCreate(dateTime: Date, content: string): Promise<NoteT> {
   const note: NoteT = { id: nanoid(), dateTime: dateTime, content: content };
@@ -27,9 +30,42 @@ export async function handleNoteDelete(noteId: string) {
   await diaryStore.refresh();
 }
 
-export async function handleExportToCsv() {}
+export async function handleExportToCsv() {
+  const notes = await db.getAllNotes();
 
-export async function handleImportFromCsv() {}
+  const data = notes.map((note) => ({
+    ...note,
+    dateTime: note.dateTime.toISOString(),
+  }));
+
+  const csvString = Papa.unparse(data);
+  const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+  saveAs(blob, "pwa-svelte-diary.csv");
+}
+
+export async function handleImportFromCsv(file: File) {
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: (results) => {
+      const parsedNotes = results.data.map((row: any) => ({
+        ...row,
+        dateTime: new Date(row.dateTime),
+      }));
+
+      console.log(parsedNotes);
+      db.saveNotes(parsedNotes);
+    },
+    error: (error) => {
+      console.error("Failed to parse CSV:", error);
+    },
+  });
+}
+
+export async function handleDeleteAllData() {
+  await db.clearAllData();
+  reload();
+}
 
 export async function handlePWAUpdate() {
   console.debug("handlePWAUpdate");
@@ -41,10 +77,7 @@ export async function handlePWAUpdate() {
   const cacheKeys = await caches.keys();
   await Promise.all(cacheKeys.map((key) => caches.delete(key)));
 
-  const url = new URL(window.location.href);
-  url.searchParams.set("v", String(Date.now()));
   setTimeout(() => {
-    window.location.replace(url);
+    reload(true);
   }, 0);
-  // window.location.href = url.toString();
 }

@@ -50,3 +50,18 @@ export function isValidDateTime(dateStr: string): boolean {
 
   return !isNaN(timestamp);
 }
+
+export function reload(hard = false) {
+  // Soft reload from cache. History does not affected
+  location.reload();
+  // Repalces history entry and reloads.
+  // location.replace(location.href);
+  // Reloads and creates new history entry
+  // location.href = location.href;
+
+  if (hard) {
+    const url = new URL(location.href);
+    url.searchParams.set("v", String(Date.now()));
+    location.replace(url);
+  }
+}

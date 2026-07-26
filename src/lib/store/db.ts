@@ -39,7 +39,7 @@ export async function isEmpty() {
 export async function getAllNotes(): Promise<NoteT[]> {
   const db = await dbPromise;
   const notes = await db.getAll("notes");
-  return notes;
+  return notes.sort((a, b) => a.dateTime.getTime() - b.dateTime.getTime());
 }
 
 export async function getNote(noteId: string): Promise<NoteT> {
@@ -68,4 +68,15 @@ export async function deleteNote(noteId: string) {
   console.debug("deleteNote", noteId);
   const db = await dbPromise;
   await db.delete("notes", noteId);
+}
+
+export async function clearAllData() {
+  console.debug("clearAllData");
+  const db = await dbPromise;
+
+  const tx = db.transaction(["notes"], "readwrite");
+
+  await Promise.all([tx.objectStore("notes").clear()]);
+
+  await tx.done;
 }
