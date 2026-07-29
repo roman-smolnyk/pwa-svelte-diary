@@ -6,7 +6,7 @@
 
 <div align="center">
   <img alt="Logo" src="public/favicon.svg" width="120" />
-  <h2><a href="https://roman-smolnyk.github.io/pwa-svelte-diary/">Open App</a></h2>
+  <h2><a href="https://pwa-svelte-diary.onrender.com">Open App</a></h2>
 </div>
 
 <br/>
