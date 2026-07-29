@@ -50,5 +50,5 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
   // github
-  base: "/pwa-svelte-diary",
+  // base: "/pwa-svelte-diary",
 });
