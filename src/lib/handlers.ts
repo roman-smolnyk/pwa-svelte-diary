@@ -4,8 +4,8 @@ import { nanoid } from "nanoid";
 import Papa from "papaparse";
 import { diaryStore } from "./store/diaryStore.svelte";
 import type { NoteT } from "./types";
-import { reload } from "./utils";
 import { pop, push, router } from "svelte-spa-router";
+import { reload } from "./pwaUtils";
 
 export function navigateToModal() {
   const currentPath = router.location.split("?")[0];
@@ -76,19 +76,4 @@ export async function handleImportFromCsv(file: File) {
 export async function handleDeleteAllData() {
   await db.clearAllData();
   reload();
-}
-
-export async function handlePWAUpdate() {
-  console.debug("handlePWAUpdate");
-  if (!navigator.onLine) return;
-
-  const registrations = await navigator.serviceWorker.getRegistrations();
-  await Promise.all(registrations.map((reg) => reg.unregister()));
-
-  const cacheKeys = await caches.keys();
-  await Promise.all(cacheKeys.map((key) => caches.delete(key)));
-
-  setTimeout(() => {
-    reload(true);
-  }, 0);
 }

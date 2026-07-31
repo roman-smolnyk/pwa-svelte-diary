@@ -2,7 +2,8 @@
   import { Button } from "$lib/components/ui/button";
   import { Label } from "$lib/components/ui/label/index.js";
   import * as Select from "$lib/components/ui/select/index.js";
-  import { handleDeleteAllData, handleExportToCsv, handleImportFromCsv, handlePWAUpdate } from "$lib/handlers";
+  import { handleDeleteAllData, handleExportToCsv, handleImportFromCsv } from "$lib/handlers";
+  import { resetPWA } from "$lib/pwaUtils";
   import { confirmStore } from "$lib/store/confirmStore.svelte";
   import { CircleArrowUpIcon, DatabaseArrowDownIcon, DatabaseArrowUpIcon, Trash2Icon } from "@lucide/svelte";
   import { userPrefersMode } from "mode-watcher";
@@ -49,7 +50,7 @@
   </SettingsSection>
 
   <SettingsSection title="App">
-    <Button variant="outline" onclick={() => handlePWAUpdate()}>
+    <Button variant="outline" onclick={() => resetPWA()}>
       <CircleArrowUpIcon /><span>Update</span>
     </Button>
   </SettingsSection>
