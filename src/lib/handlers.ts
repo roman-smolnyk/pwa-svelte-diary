@@ -2,10 +2,10 @@ import * as db from "$lib/store/db";
 import { saveAs } from "file-saver";
 import { nanoid } from "nanoid";
 import Papa from "papaparse";
+import { push, router } from "svelte-spa-router";
+import { reload } from "./pwaUtils";
 import { diaryStore } from "./store/diaryStore.svelte";
 import type { NoteT } from "./types";
-import { pop, push, router } from "svelte-spa-router";
-import { reload } from "./pwaUtils";
 
 export function navigateToModal() {
   const currentPath = router.location.split("?")[0];
