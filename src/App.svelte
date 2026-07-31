@@ -5,6 +5,12 @@
   import { Toaster } from "$lib/components/ui/sonner/index.js";
   import Main from "$lib/components/Main/Main.svelte";
   import ConfirmAlertDialog from "$lib/components/Common/ConfirmAlertDialog.svelte";
+  import { onMount } from "svelte";
+  import { requestPersistentStorage } from "$lib/pwaUtils";
+
+  onMount(() => {
+    requestPersistentStorage();
+  });
 </script>
 
 <ModeWatcher themeColors={{ dark: "black", light: "white" }} />
