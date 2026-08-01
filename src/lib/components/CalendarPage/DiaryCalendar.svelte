@@ -24,7 +24,7 @@
     monthFormat="long"
     captionLayout="dropdown"
     disableDaysOutsideMonth={true}
-    weekStartsOn={1}
+    weekStartsOn={Number(diaryStore.weekstart) as any}
   >
     {#snippet day({ day, outsideMonth })}
       <CalendarDay class="flex flex-col">

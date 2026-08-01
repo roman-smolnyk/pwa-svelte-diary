@@ -2,10 +2,12 @@ import * as db from "$lib/store/db";
 import { saveAs } from "file-saver";
 import { nanoid } from "nanoid";
 import Papa from "papaparse";
+import { toast } from "svelte-sonner";
 import { push, router } from "svelte-spa-router";
 import { reload } from "./pwaUtils";
 import { diaryStore } from "./store/diaryStore.svelte";
 import type { NoteT } from "./types";
+import { parseISODate } from "./utils";
 
 export function navigateToModal() {
   const currentPath = router.location.split("?")[0];
@@ -48,29 +50,35 @@ export async function handleExportToCsv() {
     dateTime: note.dateTime.toISOString(),
   }));
 
-  const csvString = Papa.unparse(data);
+  const csvString = Papa.unparse(data, { columns: ["id", "dateTime", "content"] });
   const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-  saveAs(blob, "pwa-svelte-diary.csv");
+  saveAs(blob, `rs-diary_${new Date().toISOString().split("T")[0]}.csv`);
 }
 
 export async function handleImportFromCsv(file: File) {
   Papa.parse(file, {
     header: true,
     skipEmptyLines: true,
-    complete: (results) => {
-      const parsedNotes = results.data.map((row: any) => ({
-        ...row,
-        dateTime: new Date(row.dateTime),
-      }));
+    complete: async (results) => {
+      try {
+        const parsedNotes = results.data.map((row: any) => ({
+          id: row.id ? row.id : nanoid(),
+          dateTime: parseISODate(row.dateTime),
+          content: row.content ? row.content : "",
+        }));
 
-      console.log(parsedNotes);
-      db.saveNotes(parsedNotes);
+        await db.saveNotes(parsedNotes);
+        reload();
+      } catch (error) {
+        console.error("Failed to parse CSV:", error);
+        toast.error(`Failed to parse CSV: ${error}`);
+      }
     },
     error: (error) => {
       console.error("Failed to parse CSV:", error);
+      toast.error(`Failed to parse CSV: ${error}`);
     },
   });
-  reload();
 }
 
 export async function handleDeleteAllData() {

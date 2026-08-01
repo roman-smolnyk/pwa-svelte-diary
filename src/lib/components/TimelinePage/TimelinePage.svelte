@@ -2,10 +2,11 @@
 <script lang="ts">
   import * as Empty from "$lib/components/ui/empty/index.js";
   import { diaryStore } from "$lib/store/diaryStore.svelte";
+  import { onMount } from "svelte";
   import TimelineNote from "./TimelineNote.svelte";
 
-  $effect(() => {
-    const note = diaryStore.selectedDateNotes[0];
+  onMount(() => {
+    const note = diaryStore.selectedDateNotes[0] ? diaryStore.selectedDateNotes[0] : diaryStore.notes[diaryStore.notes.length - 1];
     if (!note) return;
 
     setTimeout(() => {

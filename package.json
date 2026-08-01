@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "prebuild": "node scripts/updatePwaVersionJson.js",
+    "build": "npm run prebuild && vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
   },
@@ -48,6 +49,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "codemirror": "^6.0.2",
     "file-saver": "^2.0.5",
+    "idb-keyval": "^6.3.0",
     "lodash-es": "^4.18.1",
     "nanoid": "^6.0.0",
     "papaparse": "^5.5.4",

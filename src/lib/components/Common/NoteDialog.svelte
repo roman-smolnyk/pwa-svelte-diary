@@ -25,7 +25,7 @@
 
   onMount(() => {
     const handleBeforeUnload = (e: PopStateEvent) => {
-      console.debug("handleBeforeUnload", note, router.querystring);
+      console.debug("handleBeforeUnload", router.querystring);
       if (diaryStore.selectedNote && router.querystring?.includes("modal")) {
         diaryStore.selectedNote = null;
       }

@@ -22,6 +22,7 @@ export function getDateStrFromDate(date: Date): string {
 }
 
 export function formatCustomDate(date: Date): string {
+  // YYYY-MM-DD HH:SS
   const pad = (n: number) => String(n).padStart(2, "0");
 
   const year = date.getFullYear();
@@ -39,6 +40,16 @@ export function parseCustomDate(dateStr: string): Date {
 
   if (isNaN(date.getTime())) {
     throw new Error("Invalid date format");
+  }
+
+  return date;
+}
+
+export function parseISODate(dateStr: string): Date {
+  const date = new Date(dateStr);
+
+  if (isNaN(date.getTime())) {
+    throw new Error(`Invalid date format: "${dateStr}"`);
   }
 
   return date;
