@@ -44,6 +44,15 @@ class DiaryStore {
     this.selectedNote = note;
     navigateToModal();
   }
+
+  findNoteWithClosestDate(targetDate: Date): NoteT | undefined {
+    const closestNote = [...this.#notes].sort((a, b) => {
+      const diffA = Math.abs(a.dateTime.getTime() - targetDate.getTime());
+      const diffB = Math.abs(b.dateTime.getTime() - targetDate.getTime());
+      return diffA - diffB;
+    })[0];
+    return closestNote;
+  }
 }
 
 export const diaryStore = new DiaryStore();

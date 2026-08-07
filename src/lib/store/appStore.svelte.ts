@@ -1,10 +1,12 @@
 // src/lib/store/appStore.svelte.ts
 import { fetchPwaVersion } from "$lib/pwaUtils";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import localPref from "./preferences";
 
 class AppStore {
   #weekstart = $state("0");
   pwaVersion = $state("");
+  maxFutureDate = today(getLocalTimeZone()).add({ years: 50 });
 
   get weekstart() {
     return this.#weekstart;
