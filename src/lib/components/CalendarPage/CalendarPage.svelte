@@ -44,6 +44,7 @@
     {/each}
     <div class="min-h-10"></div>
   </div>
+  <div class="shrink-0 min-h-13"></div>
 </div>
 
 <div class="fixed bottom-20 right-6 z-50">

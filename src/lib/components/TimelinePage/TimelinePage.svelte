@@ -19,15 +19,18 @@
   });
 </script>
 
-<div data-component="TimelinePage" class="min-h-0 p-5 overflow-y-auto flex flex-col gap-4">
-  {#each diaryStore.notes as note (note.id)}
-    <TimelineNote {note} />
-  {:else}
-    <Empty.Root>
-      <Empty.Header>
-        <Empty.Title>No Notes</Empty.Title>
-        <Empty.Description>No notes found</Empty.Description>
-      </Empty.Header>
-    </Empty.Root>
-  {/each}
+<div data-component="TimelinePage" class="flex-1 min-h-0 flex flex-col">
+  <div class="flex-1 min-h-0 p-5 overflow-y-auto flex flex-col gap-4">
+    {#each diaryStore.notes as note (note.id)}
+      <TimelineNote {note} />
+    {:else}
+      <Empty.Root>
+        <Empty.Header>
+          <Empty.Title>No Notes</Empty.Title>
+          <Empty.Description>No notes found</Empty.Description>
+        </Empty.Header>
+      </Empty.Root>
+    {/each}
+  </div>
+  <div class="shrink-0 min-h-13"></div>
 </div>

@@ -13,6 +13,8 @@
   }: { value: CalendarDate | undefined; onValueChange?: (v: DateValue | undefined) => void } = $props();
 
   let placeholder = $state<CalendarDate>(today(getLocalTimeZone()));
+
+  const maxFutureDate = today(getLocalTimeZone()).add({ years: 50 });
 </script>
 
 <div data-component="DiaryCalendar" class="flex-1 w-full h-full">
@@ -26,6 +28,7 @@
     captionLayout="dropdown"
     disableDaysOutsideMonth={true}
     weekStartsOn={Number(appStore.weekstart) as any}
+    maxValue={maxFutureDate}
   >
     {#snippet day({ day, outsideMonth })}
       <CalendarDay class="flex flex-col">
