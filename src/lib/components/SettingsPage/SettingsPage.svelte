@@ -5,10 +5,12 @@
   import { handleDeleteAllData, handleExportToCsv, handleImportFromCsv } from "$lib/handlers";
   import { resetPWA } from "$lib/pwaUtils";
   import { confirmStore } from "$lib/store/confirmStore.svelte";
-  import { CircleArrowUpIcon, DatabaseArrowDownIcon, DatabaseArrowUpIcon, Trash2Icon } from "@lucide/svelte";
+  import { CircleArrowUpIcon, CloudIcon, CloudSyncIcon, CloudyIcon, DatabaseArrowDownIcon, DatabaseArrowUpIcon, Trash2Icon } from "@lucide/svelte";
   import { userPrefersMode } from "mode-watcher";
   import SettingsSection from "./SettingsSection.svelte";
   import { diaryStore } from "$lib/store/diaryStore.svelte";
+  import { appStore } from "$lib/store/appStore.svelte";
+  import GithubBackupDialog from "../GithubBackup/GithubBackupDialog.svelte";
 
   const themes = [
     { label: "System", value: "system" },
@@ -27,7 +29,7 @@
   ];
 
   const themeTriggerContent = $derived(themes.find((a) => a.value === userPrefersMode.current)?.label ?? "Select a theme");
-  const weekstartTriggerContent = $derived(weekstarts.find((a) => a.value === diaryStore.weekstart)?.label ?? "Select day");
+  const weekstartTriggerContent = $derived(weekstarts.find((a) => a.value === appStore.weekstart)?.label ?? "Select day");
 
   let csvFileInput$: HTMLInputElement | undefined = $state();
 
@@ -64,7 +66,7 @@
   <SettingsSection title="App">
     <div class="flex flex-col gap-2">
       <Label for="calendar-weekstart-select" class="text-muted-foreground">Week starts on</Label>
-      <Select.Root type="single" bind:value={diaryStore.weekstart}>
+      <Select.Root type="single" bind:value={appStore.weekstart}>
         <Select.Trigger id="calendar-weekstart-select" class="w-full">{weekstartTriggerContent}</Select.Trigger>
         <Select.Content>
           <Select.Group>
@@ -80,11 +82,12 @@
     </div>
     <Button variant="outline" onclick={() => resetPWA()}>
       <CircleArrowUpIcon />
-      <span>Update {diaryStore.pwaVersion ? (diaryStore.pwaVersion !== __APP_VERSION__ ? `(${diaryStore.pwaVersion})` : "") : ""}</span>
+      <span>Update {appStore.pwaVersion ? (appStore.pwaVersion !== __APP_VERSION__ ? `(${appStore.pwaVersion})` : "") : ""}</span>
     </Button>
   </SettingsSection>
 
   <SettingsSection title="Data">
+    <GithubBackupDialog />
     <Button variant="outline" onclick={() => handleExportToCsv()}>
       <DatabaseArrowDownIcon /><span>Export to CSV</span>
     </Button>

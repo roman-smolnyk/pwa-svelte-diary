@@ -46,7 +46,7 @@
       view.dispatch({
         selection: EditorSelection.cursor(view.state.doc.length),
       });
-    }, 250);
+    }, 50);
 
     cm6Store.editorView = view;
 

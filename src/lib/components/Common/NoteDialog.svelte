@@ -70,6 +70,7 @@
     <Dialog.Root open={true}>
       <Dialog.Content
         showCloseButton={false}
+        onOpenAutoFocus={(e) => e.preventDefault()}
         class="p-0 top-0 left-0 translate-x-0 translate-y-0 w-dvw h-dvh max-w-none sm:max-w-none max-h-none rounded-none
       flex flex-col gap-0"
       >
@@ -118,7 +119,7 @@
                 cm6Store.editorView.dispatch({
                   selection: EditorSelection.cursor(cm6Store.editorView.state.doc.length),
                 });
-              }, 250);
+              }, 50);
             }}
           ></div>
         </div>

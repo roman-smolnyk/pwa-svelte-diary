@@ -42,7 +42,7 @@ export async function handleNoteDelete(noteId: string) {
   await diaryStore.refresh();
 }
 
-export async function handleExportToCsv() {
+export async function createCsvString() {
   const notes = await db.getAllNotes();
 
   const data = notes.map((note) => ({
@@ -50,7 +50,11 @@ export async function handleExportToCsv() {
     dateTime: note.dateTime.toISOString(),
   }));
 
-  const csvString = Papa.unparse(data, { columns: ["id", "dateTime", "content"] });
+  return Papa.unparse(data, { columns: ["id", "dateTime", "content"] });
+}
+
+export async function handleExportToCsv() {
+  const csvString = await createCsvString();
   const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
   saveAs(blob, `rs-diary_${new Date().toISOString().split("T")[0]}.csv`);
 }
@@ -68,7 +72,7 @@ export async function handleImportFromCsv(file: File) {
         }));
 
         await db.saveNotes(parsedNotes);
-        reload();
+        setTimeout(() => reload(), 50);
       } catch (error) {
         console.error("Failed to parse CSV:", error);
         toast.error(`Failed to parse CSV: ${error}`);

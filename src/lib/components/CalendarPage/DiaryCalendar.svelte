@@ -2,6 +2,7 @@
 <script lang="ts">
   import CalendarDay from "$lib/components/ui/calendarFlex/calendar-day.svelte";
   import Calendar from "$lib/components/ui/calendarFlex/calendar.svelte";
+  import { appStore } from "$lib/store/appStore.svelte";
   import { diaryStore } from "$lib/store/diaryStore.svelte";
   import { CalendarDate, getLocalTimeZone, today, type DateValue } from "@internationalized/date";
   import DotIcon from "@lucide/svelte/icons/dot";
@@ -24,7 +25,7 @@
     monthFormat="long"
     captionLayout="dropdown"
     disableDaysOutsideMonth={true}
-    weekStartsOn={Number(diaryStore.weekstart) as any}
+    weekStartsOn={Number(appStore.weekstart) as any}
   >
     {#snippet day({ day, outsideMonth })}
       <CalendarDay class="flex flex-col">

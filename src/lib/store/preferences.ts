@@ -4,10 +4,14 @@ const customStore = createStore("rs-outliner-preferences", "rs-outliner-preferen
 
 type StorageSchema = {
   weekstart: string;
+  githubToken: string;
+  githubRepoName: string;
 };
 
 const defaultValues: StorageSchema = {
   weekstart: "0",
+  githubToken: "",
+  githubRepoName: "",
 };
 
 const localPref = {
