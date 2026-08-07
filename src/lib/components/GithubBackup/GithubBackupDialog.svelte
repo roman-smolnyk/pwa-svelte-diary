@@ -48,6 +48,11 @@
         ghb = new GithubBackuper(githubToken);
         repos = await ghb.listRepos();
       });
+    } else {
+      untrack(() => {
+        ghb = null;
+        repos = [];
+      });
     }
   });
 
@@ -59,6 +64,10 @@
         if (date) {
           githubLastBackupDate = date;
         }
+      });
+    } else {
+      untrack(() => {
+        githubLastBackupDate = null;
       });
     }
   });
