@@ -20,9 +20,7 @@
         <div class="text-xs leading-tight">{getShortMonthNameFromDate(note.dateTime)}</div>
       </div>
       <div class="flex-1 min-h-0 overflow-hidden">
-        <div class="css-markdown-render whitespace-pre-wrap break-all">
-          <Markdown text={note.content} />
-        </div>
+        <Markdown text={note.content} />
       </div>
     </Card.Content>
   </Card.Root>

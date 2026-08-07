@@ -19,7 +19,7 @@
 </script>
 
 <div data-component="CalendarNote" class="w-full h-fit">
-  <Card.Root class="w-full h-fit max-h-45 pt-2 min-h-0 cursor-pointer flex flex-col gap-0" onclick={editNote}>
+  <Card.Root class="w-full h-fit max-h-46 pt-2 min-h-0 cursor-pointer flex flex-col gap-0" onclick={editNote}>
     <Card.Header class="flex flex-row items-center justify-between">
       <Card.Description>{formatCustomDate(note.dateTime)}</Card.Description>
 
