@@ -14,6 +14,7 @@
   import CheckIcon from "@lucide/svelte/icons/check";
   import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
   import { untrack } from "svelte";
+  import { toast } from "svelte-sonner";
 
   const githubBackupFileName = "backup.csv";
 
@@ -32,6 +33,11 @@
         console.debug("$effect:untrack");
         githubToken = await localPref.get("githubToken");
         githubRepoName = await localPref.get("githubRepoName");
+      });
+    } else {
+      untrack(() => {
+        githubToken = "";
+        githubRepoName = "";
       });
     }
   });
@@ -152,6 +158,7 @@
           const success = await ghb.putFileContent(githubRepoName, githubBackupFileName, csvString);
           if (success) {
             githubLastBackupDate = new Date();
+            toast.success("Backed up successfully");
           }
           console.debug("Make Backup", success);
         }}
