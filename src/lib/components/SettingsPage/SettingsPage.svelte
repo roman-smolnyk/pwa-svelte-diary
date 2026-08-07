@@ -4,13 +4,12 @@
   import * as Select from "$lib/components/ui/select/index.js";
   import { handleDeleteAllData, handleExportToCsv, handleImportFromCsv } from "$lib/handlers";
   import { resetPWA } from "$lib/pwaUtils";
-  import { confirmStore } from "$lib/store/confirmStore.svelte";
-  import { CircleArrowUpIcon, CloudIcon, CloudSyncIcon, CloudyIcon, DatabaseArrowDownIcon, DatabaseArrowUpIcon, Trash2Icon } from "@lucide/svelte";
-  import { userPrefersMode } from "mode-watcher";
-  import SettingsSection from "./SettingsSection.svelte";
-  import { diaryStore } from "$lib/store/diaryStore.svelte";
   import { appStore } from "$lib/store/appStore.svelte";
+  import { confirmStore } from "$lib/store/confirmStore.svelte";
+  import { CircleArrowUpIcon, DatabaseArrowDownIcon, DatabaseArrowUpIcon, Trash2Icon } from "@lucide/svelte";
+  import { userPrefersMode } from "mode-watcher";
   import GithubBackupDialog from "../GithubBackup/GithubBackupDialog.svelte";
+  import SettingsSection from "./SettingsSection.svelte";
 
   const themes = [
     { label: "System", value: "system" },

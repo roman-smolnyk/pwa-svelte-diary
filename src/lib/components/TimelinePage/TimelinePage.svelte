@@ -15,7 +15,7 @@
         console.debug("TimelinePage:scrollIntoView", element);
         element.scrollIntoView({ behavior: "instant" });
       }
-    }, 250);
+    }, 50);
   });
 </script>
 
