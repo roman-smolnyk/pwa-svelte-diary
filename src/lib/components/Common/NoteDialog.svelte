@@ -13,10 +13,17 @@
   import { onMount } from "svelte";
   import { pop, router } from "svelte-spa-router";
   import CM6Editor from "../CM6/CM6Editor.svelte";
+  import { requestPersistentStorage } from "$lib/pwaUtils";
+
+  let inputValue$ = $state("");
 
   let note = $derived(diaryStore.selectedNote);
 
-  let inputValue$ = $state("");
+  $effect(() => {
+    if (note) {
+      requestPersistentStorage();
+    }
+  });
 
   $effect(() => {
     if (!note) return;
