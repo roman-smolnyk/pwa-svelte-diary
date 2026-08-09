@@ -18,6 +18,10 @@ export class GithubBackuper {
     } catch {}
   }
 
+  async isTokenValid() {
+    return Boolean(await this.getOwner());
+  }
+
   async listRepos() {
     try {
       // const { data: repos } = await octokit.rest.repos.listForAuthenticatedUser({

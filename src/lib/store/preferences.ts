@@ -6,12 +6,14 @@ type StorageSchema = {
   weekstart: string;
   githubToken: string;
   githubRepoName: string;
+  githubAutoBackup: string;
 };
 
 const defaultValues: StorageSchema = {
   weekstart: "0",
   githubToken: "",
   githubRepoName: "",
+  githubAutoBackup: "",
 };
 
 const localPref = {

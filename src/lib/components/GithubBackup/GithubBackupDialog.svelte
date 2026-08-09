@@ -5,6 +5,8 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import { Label } from "$lib/components/ui/label/index.js";
   import * as Popover from "$lib/components/ui/popover/index.js";
+  import * as Select from "$lib/components/ui/select/index.js";
+  import { GITHUB_BACKUP_FILE_NAME } from "$lib/constants";
   import { GithubBackuper } from "$lib/githubBackuper";
   import { createCsvString, handleImportFromCsv } from "$lib/handlers";
   import { confirmStore } from "$lib/store/confirmStore.svelte";
@@ -16,16 +18,24 @@
   import { untrack } from "svelte";
   import { toast } from "svelte-sonner";
 
-  const githubBackupFileName = "backup.csv";
+  const autoBackupValues = [
+    { label: "Disabled", value: "" },
+    { label: "Daily", value: "daily" },
+    { label: "Weekly", value: "weekly" },
+    { label: "Monthly", value: "monthly" },
+  ];
 
   let ghb = $state<GithubBackuper | null>(null);
   let githubToken = $state("");
   let githubRepoName = $state("");
   let githubLastBackupDate = $state<Date | null>(null);
-  let repos = $state<any[]>([]);
+  let githubRepos = $state<any[]>([]);
+  let githubAutoBackup = $state("");
 
   let dialogIsOpen$ = $state(false);
   let popoverIsOpen$ = $state(false);
+
+  const autoBackupTriggerContent = $derived(autoBackupValues.find((a) => a.value === githubAutoBackup)?.label ?? "Select");
 
   $effect(() => {
     if (dialogIsOpen$) {
@@ -33,11 +43,13 @@
         console.debug("$effect:untrack");
         githubToken = await localPref.get("githubToken");
         githubRepoName = await localPref.get("githubRepoName");
+        githubAutoBackup = await localPref.get("githubAutoBackup");
       });
     } else {
       untrack(() => {
         githubToken = "";
         githubRepoName = "";
+        githubAutoBackup = "";
       });
     }
   });
@@ -46,12 +58,15 @@
     if (githubToken) {
       untrack(async () => {
         ghb = new GithubBackuper(githubToken);
-        repos = await ghb.listRepos();
+        if (!(await ghb.isTokenValid())) {
+          toast.error("GitHub token is invalid");
+        }
+        githubRepos = await ghb.listRepos();
       });
     } else {
       untrack(() => {
         ghb = null;
-        repos = [];
+        githubRepos = [];
       });
     }
   });
@@ -60,7 +75,7 @@
     if (ghb && githubRepoName) {
       untrack(async () => {
         if (!ghb) return;
-        const date = await ghb.getLastFileCommitDate(githubRepoName, githubBackupFileName);
+        const date = await ghb.getLastFileCommitDate(githubRepoName, GITHUB_BACKUP_FILE_NAME);
         if (date) {
           githubLastBackupDate = date;
         }
@@ -86,9 +101,10 @@
       <Dialog.Title>GitHub Backup</Dialog.Title>
     </Dialog.Header>
     <div class="flex flex-col gap-2">
-      <Label>GitHub Access Token</Label>
+      <Label for="github-access-token" class="text-muted-foreground">GitHub Access Token</Label>
       <div class="flex flex-col gap-4">
         <Input
+          id="github-access-token"
           class="[-webkit-text-security:disc] focus:[-webkit-text-security:none]"
           value={githubToken}
           oninput={async (e) => {
@@ -104,7 +120,7 @@
             class="flex-1"
             onclick={async () => {
               if (!ghb) return;
-              repos = await ghb.listRepos();
+              githubRepos = await ghb.listRepos();
             }}>Apply</Button
           >
           <Button
@@ -113,8 +129,10 @@
             onclick={async () => {
               githubToken = "";
               githubRepoName = "";
+              githubAutoBackup = "";
               await localPref.set("githubToken", "");
               await localPref.set("githubRepoName", "");
+              await localPref.set("githubAutoBackup", "");
               dialogIsOpen$ = false;
             }}
           >
@@ -139,7 +157,7 @@
             <Command.List>
               <Command.Empty>No repository found.</Command.Empty>
               <Command.Group value="repositories">
-                {#each repos as repo (repo.name)}
+                {#each githubRepos as repo (repo.name)}
                   <Command.Item
                     value={repo.name}
                     onSelect={async () => {
@@ -158,13 +176,34 @@
         </Popover.Content>
       </Popover.Root>
     </div>
+    <div class="flex flex-col gap-2">
+      <Label for="autobackup-select" class="text-muted-foreground">Automatic backup</Label>
+      <Select.Root
+        type="single"
+        bind:value={githubAutoBackup}
+        onValueChange={async (value) => {
+          await localPref.set("githubAutoBackup", value);
+        }}
+      >
+        <Select.Trigger id="autobackup-select" class="w-full">{autoBackupTriggerContent}</Select.Trigger>
+        <Select.Content>
+          <Select.Group>
+            {#each autoBackupValues as autoBackup (autoBackup.value)}
+              <Select.Item value={autoBackup.value} label={autoBackup.label}>
+                {autoBackup.label}
+              </Select.Item>
+            {/each}
+          </Select.Group>
+        </Select.Content>
+      </Select.Root>
+    </div>
     <div>Last Backup: <span>{githubLastBackupDate ? githubLastBackupDate.toLocaleString() : "No Backup"}</span></div>
     <div class="flex flex-col gap-2">
       <Button
         onclick={async () => {
           if (!ghb || !githubRepoName) return;
           const csvString = await createCsvString();
-          const success = await ghb.putFileContent(githubRepoName, githubBackupFileName, csvString);
+          const success = await ghb.putFileContent(githubRepoName, GITHUB_BACKUP_FILE_NAME, csvString);
           if (success) {
             githubLastBackupDate = new Date();
             toast.success("Backed up successfully");
@@ -179,9 +218,9 @@
         onclick={async () => {
           if (!ghb || !githubRepoName) return;
           if (await confirmStore.confirm("Restore from Backup?", "All current data will be wiped out!")) {
-            const content = await ghb.getFileContent(githubRepoName, githubBackupFileName);
+            const content = await ghb.getFileContent(githubRepoName, GITHUB_BACKUP_FILE_NAME);
             if (content) {
-              const file = new File([content], githubBackupFileName, {
+              const file = new File([content], GITHUB_BACKUP_FILE_NAME, {
                 type: "text/csv",
               });
               await handleImportFromCsv(file);
@@ -195,7 +234,7 @@
       <!-- <Button
         onclick={async () => {
           if (!ghb || !githubRepoName) return;
-          const zebra = await ghb.getLastFileCommitDate(githubRepoName, githubBackupFileName);
+          const zebra = await ghb.getLastFileCommitDate(githubRepoName, GITHUB_BACKUP_FILE_NAME);
           console.debug("zebra", zebra);
         }}
       >

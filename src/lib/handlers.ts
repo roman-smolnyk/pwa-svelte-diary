@@ -4,8 +4,11 @@ import { nanoid } from "nanoid";
 import Papa from "papaparse";
 import { toast } from "svelte-sonner";
 import { push, router } from "svelte-spa-router";
+import { GITHUB_BACKUP_FILE_NAME } from "./constants";
+import { GithubBackuper } from "./githubBackuper";
 import { reload } from "./pwaUtils";
 import { diaryStore } from "./store/diaryStore.svelte";
+import localPref from "./store/preferences";
 import type { NoteT } from "./types";
 import { parseISODate } from "./utils";
 
@@ -88,4 +91,41 @@ export async function handleImportFromCsv(file: File) {
 export async function handleDeleteAllData() {
   await db.clearAllData();
   reload();
+}
+
+function shouldBackup(githubAutoBackup: string, date: Date): boolean {
+  const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+  const ONE_WEEK_MS = 7 * ONE_DAY_MS;
+  const ONE_MONTH_MS = 30 * ONE_DAY_MS;
+
+  const diffMs = Date.now() - date.getTime();
+
+  if (githubAutoBackup === "daily") {
+    if (diffMs >= ONE_DAY_MS) return true;
+  } else if (githubAutoBackup === "weekly") {
+    if (diffMs >= ONE_WEEK_MS) return true;
+  } else if (githubAutoBackup === "monthly") {
+    if (diffMs >= ONE_MONTH_MS) return true;
+  }
+  return false;
+}
+
+export async function handleAutoBackup() {
+  const githubToken = await localPref.get("githubToken");
+  const githubRepoName = await localPref.get("githubRepoName");
+  const githubAutoBackup = await localPref.get("githubAutoBackup");
+
+  if (!githubToken || !githubRepoName || !githubAutoBackup) {
+    return;
+  }
+
+  const ghb = new GithubBackuper(githubToken);
+  const date = await ghb.getLastFileCommitDate(githubRepoName, GITHUB_BACKUP_FILE_NAME);
+  if (date && shouldBackup(githubAutoBackup, date)) {
+    const csvString = await createCsvString();
+    const success = await ghb.putFileContent(githubRepoName, GITHUB_BACKUP_FILE_NAME, csvString);
+    if (success) {
+      toast.success("Backed up successfully");
+    }
+  }
 }
